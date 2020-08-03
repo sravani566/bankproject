@@ -1,0 +1,172 @@
+Database : application
+Table1: useraccount
+Id	user	password
+01	Ram	123
+02	Syam	345
+                                      
+
+ 
+
+Table2: bankaccount
+Id	user	ano	balance
+01	Ram	7895	4000
+02	Syam	8956	4000
+
+
+
+
+Login Page:
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+</head>
+<body>
+<body>
+	<form name="loginform" method="post" action="secondpage.jsp">
+		<br> <br>
+		<table align="center">
+			<tr>
+				<td><h2>Login </h2></td>
+			</tr>
+		</table>
+		<table align="center"
+			style="border: 1px solid #000000; background-color: #efefef;">
+			<tr>
+				<td colspan=2></td>
+			</tr>
+			<tr>
+				<td colspan=2>&nbsp;</td>
+			</tr>
+			<tr>
+				<td><b>Login </b></td>
+				<td><input type="text" name="username" value=""></td>
+			</tr>
+			<tr>
+				<td><b>Password</b></td>
+				<td><input type="password" name="password" value=""></td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td><input type="submit" name="Submit" value="Submit"></td>
+			</tr>
+			<tr>
+				<td colspan=2>&nbsp;</td>
+			</tr>
+
+		</table>
+	</form>
+</body>
+</html>
+
+Output:
+ 
+Connecting to the Database:
+<%@ page language="Java" import="java.sql.*"%>
+<%	
+	Connection conn = null;
+String url = "jdbc:mysql://localhost:3306/";
+String dbName = "application";
+String driver = "com.mysql.jdbc.Driver";
+String userName = "pooja";
+String password = "pooja";
+try {
+	Class.forName(driver).newInstance();
+	conn = DriverManager.getConnection(url + dbName, userName, password);
+	if (request.getParameter("user") != null && request.getParameter("user") != ""
+	&& request.getParameter("password") != null && request.getParameter("password") != "") {
+		String username = request.getParameter("user");
+		String userpass = request.getParameter("password");
+		Statement st = conn.createStatement();
+		ResultSet rs = st
+		.executeQuery("select * from user where username='" + username + "' and password='" + userpass + "'");
+		int count = 0;
+		if (rs.next()) {
+%>
+<a href="thirdpage..jsp">Transaction </a>
+<%
+	} else {
+response.sendRedirect("firstpage.jsp");
+}
+
+}} catch (Exception e) {}
+%>
+Output:
+Transaction
+Transaction:
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>	
+<head>
+<meta charset="ISO-8859-1">
+
+</head>
+<body>
+
+	<form method="post" action="fourthpage.jsp">
+		<table>
+			<tr>
+				<td>Account From</td>
+				<td><input type="text" name="number"></td>
+			</tr>
+			<tr>
+				<td>Amount</td>
+				<td><input type="text" name="amt"></td>
+			</tr>
+			<tr>
+				<td> Account To</td>
+				<td><input type="text" name="too"></td>
+			</tr>
+			<tr>
+				<td><input type="submit" value="submit"></td>
+			</tr>
+		</table>
+	</form>
+
+</body>
+</html>
+Output:
+ 
+Transaction Done:
+
+<%@page import="java.sql.*"%>
+<%
+	int acc1 = Integer.parseInt(request.getParameter("number"));
+int bal = Integer.parseInt(request.getParameter("amt"));
+int acc2 = Integer.parseInt(request.getParameter("too"));
+
+try {
+	Class.forName("com.mysql.jdbc.Driver");
+	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/application", "pooja", "pooja");
+	Statement st = con.createStatement();
+
+	ResultSet rs = st.executeQuery("select balance from bank where ano='" + acc1 + "'");
+
+	int balance1 = 0;
+	while (rs.next()) {
+		balance1 = rs.getInt("balance");
+	}
+        String sql="UPDATE bank"+"SET balance=balance-1000 where ano='"+ acc2 + "'");
+        st.executeUpdate(sql);
+	ResultSet rs1 = st.executeQuery("select balance from bank where ano='" + acc2 + "'");
+	int balance2 = 0;
+	while (rs1.next()) {
+		balance2 = rs1.getInt("balance");
+	}	int bal1 = balance1 - bal;
+	int bal2 = balance2 + bal;
+
+	st.addBatch("balance1=" + bal1 + " where ano='" + acc1 + "'");
+	st.addBatch("balance2=" + bal2 + " where ano='" + acc2 + "'");
+	st.executeBatch();
+	} catch (Exception e) {
+}
+%>
+Output:
+Balance1= 5000 where ano=7895
+Balance2= 4000 where ano=8956
+
